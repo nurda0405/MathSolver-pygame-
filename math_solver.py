@@ -86,23 +86,27 @@ class Cell(pygame.sprite.Sprite):
         self.draw()
         
     def click(self):
-        if not self.ticked:
+        if not self.ticked and self.isAdjacent():
             self.image.fill((0,255,0))
             player_path.append([self.gridX, self.gridY])
             self.ticked = True
             self.draw()
-
+            
+    def isAdjacent(self):
+        lastX, lastY = player_path[-1][0], player_path[-1][1]
+        if abs(lastX - self.gridX) <= 1 and abs(lastY - self.gridY) <= 1:
+            if not (abs(lastX - self.gridX) == 1 and abs(lastY - self.gridY) == 1):
+                return True
+        return False 
     def remove(self):
         self.ticked = False
         self.image.fill((255,255,255))
         self.draw()
-        print("removed!")
 
     def draw(self):
         screen.blit(self.image, (self.screenX, self.screenY))
         screen.blit(self.text, (self.textX, self.textY))
             
-
 pygame.init()
 screen = pygame.display.set_mode((730,730))
 font = pygame.font.Font('freesansbold.ttf',24)
@@ -112,15 +116,18 @@ row = 8
 col = 8
 width = 80
 game = Game(8, 8)
-player_path = []
+player_path = [[0, 0]]
 cells = [[0 for i in range(col)] for j in range(row)]
 coordinates = [10 + 90 * i for i in range(row)]
+
 for i in range(row): #creating cells
     for j in range(col):
         cell = Cell(i, j, coordinates[i], coordinates[j], game.grid[i][j], width)
         cells[i][j] = cell
-
+        
 cells[0][0].click()
+player_path.pop()
+
 run = True
 
 while run:
@@ -141,6 +148,5 @@ while run:
                     gridX, gridY = player_path[-1][0], player_path[-1][1]
                     player_path.pop()
                     cells[gridX][gridY].remove()
-                    print(gridX, gridY, player_path)
     pygame.display.update()
 
