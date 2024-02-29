@@ -51,3 +51,55 @@ Restart button:
 Show path:
     iterate the cells of game's path;
     change the color of cell to yellow;
+
+I want to show arrows while showing the path. For this I am foing to blit it on the screen by the coordinates of 
+cell.
+After stopping showing the path, I am going to draw the cells.
+
+Error:
+After finishing showing the path first cell is not colored.
+
+I am going to replace arrows with lines and corners.
+There are 2 lines and 4 corners:
+When to use each of them:
+
+Lines: when the previous and next cells on the line.
+
+def where(current, anotherCell)
+    previousCol = previousCol - CurrentCol;
+    previousRow = previousRow - CurrentRow;
+    if previousCol == 0:
+        if previousRow == -1:
+            previous = 'up'
+        else:
+            previous = 'down'
+    elif previousCol == -1:
+        previous = 'left'
+    else:
+        previous = 'right'
+
+nextCol = nextCol - currentCol;
+nextRow = nextRow - currentRow;
+
+
+1. left-right:
+    abs(previousRow) == abs(nextRow) == 0;
+    abs(previousCol) == abs(nextCol) == 1 
+
+2. up-down: 
+    abs(previousRow) == abs(nextRow) == 1;
+    abs(previousCol) == abs(nextCol) == 0 
+
+Corners:
+1. left-up: 
+    previousCol = -1;
+    previousRow = 0;
+
+    nextRow = -1;
+    nextCol = 0;
+2. left - down:
+    previousCol = -1;
+    previousRow = 0;
+
+    nextRow = -1;
+    nextCol = 0;

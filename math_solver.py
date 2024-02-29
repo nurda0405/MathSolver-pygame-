@@ -65,10 +65,6 @@ class Game:
         #tracing the path
         self.trace_path(self.path[1][0], self.path[1][1], 1, self.grid[0][0])
 
-        self.problem = ''
-        for cell in self.path:
-            self.problem += str(self.grid[cell[0]][cell[1]])
-
 class Cell(pygame.sprite.Sprite):
     def __init__(self, gridX, gridY, screenY, screenX, value, width):
         pygame.sprite.Sprite.__init__(self)
@@ -110,15 +106,6 @@ class Cell(pygame.sprite.Sprite):
     def draw(self):
         screen.blit(self.image, (self.screenX, self.screenY))
         screen.blit(self.text, (self.textX, self.textY))
-    
-    def change_state(self):
-        if self.ticked:
-            self.image.fill((255,255,255))
-            self.ticked = False
-        else:
-            self.image.fill((0,255,0))
-            self.ticked = True
-        self.draw()
 
 def restart():
     game.__init__(row, col, min, max)
@@ -137,17 +124,42 @@ def erase():
         cell= player_path.pop()
         cells[cell[0]][cell[1]].change_state()
 
-def change_state(list_cells):
-    for cell in list_cells:
-        cells[cell[0]][cell[1]].change_state()
+def show_direction(list_cells):
+    l = len(list_cells)
+    for i in range(1, l-1):
+        cell = cells[list_cells[i][0]][list_cells[i][1]]
+        nextCell = cells[list_cells[i+1][0]][list_cells[i+1][1]]
+        x = cell.screenX
+        y = cell.screenY
+        direction = [nextCell.gridRow - cell.gridRow, nextCell.gridCol - cell.gridCol]
+        if direction == [0,-1]:
+            screen.blit(left, (x,y))
+        elif direction == [0, 1]:
+            screen.blit(right, (x,y))
+        elif direction == [1, 0]:
+            screen.blit(down, (x,y))
+        else:
+            screen.blit(up, (x,y))
 
+def visible(list_cells, toReset):
+    for coordinate in list_cells:
+        cell = cells[coordinate[0]][coordinate[1]]
+        cell.image.fill((255,255,255))
+        cell.draw()
+
+        
 pygame.init()
-row = 8
-col = 8
+row = 4
+col = 4
 width = 80
 min = 1
 max = 20
 coordinates = [10 + 90 * i for i in range(row)]
+
+up = pygame.image.load('up.png')
+down = pygame.image.load('down.png')
+right = pygame.image.load('right.png')
+left = pygame.image.load('left.png')
 
 screen = pygame.display.set_mode((coordinates[row - 1] + width + 10, coordinates[col - 1] + width + 10))
 font = pygame.font.Font('freesansbold.ttf',24)
@@ -184,13 +196,13 @@ while run:
             if event.key == pygame.K_SPACE:
                 erase()
             if event.key == pygame.K_KP_ENTER:
-                change_state(player_path)
-                change_state(game.path)
+                visible(player_path, False)
+                show_direction(game.path)
                 
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_KP_ENTER:
-                change_state(game.path)
-                change_state(player_path)
+                visible(game.path, False)
+                visible(player_path, True)
 
 
                     
