@@ -60,46 +60,56 @@ Error:
 After finishing showing the path first cell is not colored.
 
 I am going to replace arrows with lines and corners.
-There are 2 lines and 4 corners:
-When to use each of them:
+Algorithm of doing that:
+1. identifying where the previous and next cells are coordinated;
+2. identifying direction and choosing the right picture.
 
-Lines: when the previous and next cells on the line.
+pictures = {}
+pictures['left-down] = 'left-down.png'
+pictures['left-up] = 'left-up.png'
+pictures['right-down] = 'right-down.png'
+pictures['right-up] = 'right-up.png'
 
-def where(current, anotherCell)
-    previousCol = previousCol - CurrentCol;
-    previousRow = previousRow - CurrentRow;
-    if previousCol == 0:
-        if previousRow == -1:
-            previous = 'up'
+opposite_directions = {}
+opposite_directions['right'] = 'left'
+opposite_directions['left'] = 'right'
+opposite_directions['up'] = 'down'
+opposite_directions['down'] = 'up'
+
+previous = 'unknown'
+#adding the first cell to last_element list
+
+def show_path(list_cells):
+    for cell in list_cells:
+        next = direction(current, next)
+        if (previous == 'left' or previous = 'right'):
+            if (next == 'left' or next == 'right) :
+                if previous == 'left':
+                    picture = pictures[previous + '-' + next]
+                else:
+                    picture = pictures[next + '-' + previous]
+            else:
+                picture = pictures[previous + '-' + next]
+        else: previous = [up, down] next = [left, right]
+            picture = pictures[next + '-' + previous]
+
+    previous = opposite_directions[next]
+
+What to do: to save the direction of the next cell to use it as the direction of previous cell of the next cell.
+
+def direction(current, next):
+    rowDifference = nextRow - currentRow = [0,1,-1]
+    colDifference = nextCol - currentCol = [0,1,-1]
+
+    if rowDifference == 0:
+        if colDifference == 1:
+            return 'right'
         else:
-            previous = 'down'
-    elif previousCol == -1:
-        previous = 'left'
+            return 'left'
+    elif rowDifference == 1:
+        return 'down'
     else:
-        previous = 'right'
+        return 'up'
+        
 
-nextCol = nextCol - currentCol;
-nextRow = nextRow - currentRow;
-
-
-1. left-right:
-    abs(previousRow) == abs(nextRow) == 0;
-    abs(previousCol) == abs(nextCol) == 1 
-
-2. up-down: 
-    abs(previousRow) == abs(nextRow) == 1;
-    abs(previousCol) == abs(nextCol) == 0 
-
-Corners:
-1. left-up: 
-    previousCol = -1;
-    previousRow = 0;
-
-    nextRow = -1;
-    nextCol = 0;
-2. left - down:
-    previousCol = -1;
-    previousRow = 0;
-
-    nextRow = -1;
-    nextCol = 0;
+    

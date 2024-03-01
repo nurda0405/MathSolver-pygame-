@@ -107,6 +107,7 @@ class Cell(pygame.sprite.Sprite):
         screen.blit(self.image, (self.screenX, self.screenY))
         screen.blit(self.text, (self.textX, self.textY))
 
+#F5 button
 def restart():
     game.__init__(row, col, min, max)
     for i in range(len(player_path) - 1):
@@ -117,44 +118,94 @@ def restart():
             cells[i][j] = cell
     cells[0][0].click()
     player_path.pop()
-    print(game.path)
 
-def erase():
-    while len(player_path) > 1:
-        cell= player_path.pop()
-        cells[cell[0]][cell[1]].change_state()
-
-def show_direction(list_cells):
+#Enter button 
+def show_path(list_cells):
+    global picture
+    previous = cells[0][0]
+    next = cells[game.path[1][0]][game.path[1][1]]
+    previous = opposite_directions[direction(previous, next)]
     l = len(list_cells)
-    for i in range(1, l-1):
-        cell = cells[list_cells[i][0]][list_cells[i][1]]
-        nextCell = cells[list_cells[i+1][0]][list_cells[i+1][1]]
-        x = cell.screenX
-        y = cell.screenY
-        direction = [nextCell.gridRow - cell.gridRow, nextCell.gridCol - cell.gridCol]
-        if direction == [0,-1]:
-            screen.blit(left, (x,y))
-        elif direction == [0, 1]:
-            screen.blit(right, (x,y))
-        elif direction == [1, 0]:
-            screen.blit(down, (x,y))
+    for i in range(l):
+        coordinate = list_cells[i]
+        if i != l - 1:
+            next = cells[list_cells[i+1][0]][list_cells[i+1][1]]
         else:
-            screen.blit(up, (x,y))
-
-def visible(list_cells, toReset):
-    for coordinate in list_cells:
+            next = cells[row - 1][col - 1]
         cell = cells[coordinate[0]][coordinate[1]]
-        cell.image.fill((255,255,255))
+        #the problem is that it will give an error while proceeding previous cell from final cell
+        #I have to make the cycle stop when it reaches the previous cell from the final cell, and make 
+        next = direction(cell, next)
+        if previous == 'left' or previous == 'right':
+            if next == 'left' or next == 'right':
+                if previous == 'left':
+                    picture = previous + '-' + next + '.png'
+                else:
+                    picture = next + '-' + previous + '.png'
+            else:
+                picture = previous + '-' + next + '.png'
+        elif next == 'up' or next =='down':
+            if next == 'up':
+                picture = next + '-' + previous + '.png'
+            else:
+                picture = previous + '-' + next + '.png'
+        else:
+            picture = next + '-' + previous + '.png'
+        
+        cell.image = pygame.image.load(picture)
         cell.draw()
+        previous = opposite_directions[next]
+        
+def direction(current, next):
+    currentRow = current.gridRow
+    currentCol = current.gridCol
+    nextRow = next.gridRow
+    nextCol = next.gridCol
+
+    rowDifference = nextRow - currentRow 
+    colDifference = nextCol - currentCol 
+
+    if rowDifference == 0:
+        if colDifference == 1:
+            return 'right'
+        else:
+            return 'left'
+    elif rowDifference == 1:
+        return 'down'
+    else:
+        return 'up'
+
+def visible(list_cells, toShow):
+    if toShow:
+        for coordinate in list_cells:
+            cell = cells[coordinate[0]][coordinate[1]]
+            cell.image.fill((0,255,0))
+            cell.ticked = True
+            cell.draw()
+    else:
+        for coordinate in list_cells:
+            cell = cells[coordinate[0]][coordinate[1]]
+            cell.image.fill((255,255,255))
+            cell.ticked = False
+            cell.draw()
 
         
 pygame.init()
-row = 4
-col = 4
+row = 8
+col = 8
 width = 80
 min = 1
 max = 20
 coordinates = [10 + 90 * i for i in range(row)]
+
+
+opposite_directions = {}
+opposite_directions['right'] = 'left'
+opposite_directions['left'] = 'right'
+opposite_directions['up'] = 'down'
+opposite_directions['down'] = 'up'
+
+picture = 'unknown'
 
 up = pygame.image.load('up.png')
 down = pygame.image.load('down.png')
@@ -167,6 +218,7 @@ font = pygame.font.Font('freesansbold.ttf',24)
 game = Game(row, col, min, max)
 player_path = [[0, 0]]
 cells = [[0 for i in range(col)] for j in range(row)]
+previous = 'unknown'
 restart()
 
 
@@ -190,18 +242,20 @@ while run:
                 if len(player_path) > 1:
                     gridX, gridY = player_path[-1][0], player_path[-1][1]
                     player_path.pop()
-                    cells[gridX][gridY].change_state()
+                    cells[gridX][gridY].ticked = False
+                    visible([[gridX, gridY]], False)
             if event.key == pygame.K_F5:
                 restart()
             if event.key == pygame.K_SPACE:
-                erase()
+                visible(player_path[1:], False) #making all player cells invisible except the first one
+                player_path = player_path[0:1] 
             if event.key == pygame.K_KP_ENTER:
-                visible(player_path, False)
-                show_direction(game.path)
+                visible(player_path, False) #making invisible the player path
+                show_path(game.path[1:-1]) #showing the path
                 
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_KP_ENTER:
-                visible(game.path, False)
+                visible(game.path, False) 
                 visible(player_path, True)
 
 
