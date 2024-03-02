@@ -88,13 +88,11 @@ class Cell(pygame.sprite.Sprite):
             player_path.append([self.gridRow, self.gridCol])
             self.ticked = True
             self.draw()
-            print(player_path)
             if self.gridRow == row - 1 and self.gridCol == col - 1:
                 if player_path == game.path:
-                    print("You win!")
+                    print("Correct. You win!")
                 else:
-                    print("Try again...")
-                print('\n', player_path, '\n', game.path)
+                    print("Wrong. Try again...")
             
     def isAdjacent(self):
         lastRow, lastCol = player_path[-1][0], player_path[-1][1]
@@ -191,8 +189,8 @@ def visible(list_cells, toShow):
 
         
 pygame.init()
-row = 8
-col = 8
+row = 3
+col = 3
 width = 80
 min = 1
 max = 20
@@ -235,7 +233,6 @@ while run:
                 for j in range(col):
                     if coordinates[i] <= mouseY <= coordinates[i] + width and coordinates[j] <= mouseX <= coordinates[j] + width: #i and j swaped?
                         cells[i][j].click()
-                        print(i, j) #correct
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_z:
