@@ -189,8 +189,8 @@ def visible(list_cells, toShow):
 
         
 pygame.init()
-row = 3
-col = 3
+row = 8
+col = 8
 width = 80
 min = 1
 max = 20
@@ -205,10 +205,6 @@ opposite_directions['down'] = 'up'
 
 picture = 'unknown'
 
-up = pygame.image.load('up.png')
-down = pygame.image.load('down.png')
-right = pygame.image.load('right.png')
-left = pygame.image.load('left.png')
 
 screen = pygame.display.set_mode((coordinates[row - 1] + width + 10, coordinates[col - 1] + width + 10))
 font = pygame.font.Font('freesansbold.ttf',24)
@@ -247,7 +243,7 @@ while run:
                 visible(player_path[1:], False) #making all player cells invisible except the first one
                 player_path = player_path[0:1] 
             if event.key == pygame.K_KP_ENTER:
-                visible(player_path, False) #making invisible the player path
+                visible(player_path, False) #making the player path invisible
                 show_path(game.path[1:-1]) #showing the path
                 
         if event.type == pygame.KEYUP:
@@ -258,6 +254,3 @@ while run:
 
                     
     pygame.display.update()
-
-#the error in restarting the game
-#the error in indexing of grid, when clicked the axes of the cell are swaped
