@@ -4,7 +4,7 @@ import pygame
 # fill the grid with numbers and figures, after that trace a path until the last cell.
 class Game:
     def find_path(self, x, y, path):
-        #stop if reached the end cell
+        #stop if reached the last cell
         if (x == self.row - 1 and y == self.col - 2) or (x == self.row - 2 and y == self.col - 1):
             self.reached = True
             self.path = path + [[x, y], [self.row - 1, self.col - 1]]
@@ -35,12 +35,12 @@ class Game:
         elif figure == '-':
             sum -= self.grid[x][y]
 
-        if i < self.length - 4: #why the last two elements are executed when I put -2, why does it work when I put -4?
+        if i < self.length - 4: #why the last two elements are executed when I put -2, why does it work when I put -4? At least it works!
             self.trace_path(self.path[i + 1][0], self.path[i + 1][1], i + 1, sum)
         else:
             self.grid[self.row - 1][self.col - 1] = sum
     
-    def __init__(self, row, col, min, max):
+    def __init__(self, row, col, minNumber, maxNumber):
         self.row = row
         self.col = col
         self.path = []
@@ -52,10 +52,10 @@ class Game:
         #filling the grid with random values
         for i in range(self.row):
             for j in range(self.col):
-                if (i + j) % 2:    
+                if (i + j) % 2: 
                     self.grid[i][j] = random.choice(['+', '-'])
                 else:
-                    self.grid[i][j] = random.randint(min, max)
+                    self.grid[i][j] = random.randint(minNumber, maxNumber)
         self.grid[self.row - 1][self.col - 2], self.grid[self.row - 2][self.col - 1] = "=", "="
 
         #finding a path until the last cell
@@ -107,7 +107,7 @@ class Cell(pygame.sprite.Sprite):
 
 #F5 button
 def restart():
-    game.__init__(row, col, min, max)
+    game.__init__(row, col, minNumber, maxNumber)
     for i in range(len(player_path) - 1):
         player_path.pop()
     for i in range(row): #creating cells
@@ -137,18 +137,18 @@ def show_path(list_cells):
         if previous == 'left' or previous == 'right':
             if next == 'left' or next == 'right':
                 if previous == 'left':
-                    picture = previous + '-' + next + '.png'
+                    picture = folder + previous + '-' + next + '.png'
                 else:
-                    picture = next + '-' + previous + '.png'
+                    picture = folder + next + '-' + previous + '.png'
             else:
-                picture = previous + '-' + next + '.png'
+                picture = folder + previous + '-' + next + '.png'
         elif next == 'up' or next =='down':
             if next == 'up':
-                picture = next + '-' + previous + '.png'
+                picture = folder + next + '-' + previous + '.png'
             else:
-                picture = previous + '-' + next + '.png'
+                picture = folder + previous + '-' + next + '.png'
         else:
-            picture = next + '-' + previous + '.png'
+            picture = folder + next + '-' + previous + '.png'
         
         cell.image = pygame.image.load(picture)
         cell.draw()
@@ -192,24 +192,26 @@ pygame.init()
 row = 8
 col = 8
 width = 80
-min = 1
-max = 20
+minNumber = 1
+maxNumber = 20
 coordinates = [10 + 90 * i for i in range(row)]
 
-
+#this is the variables I use to store the names of pictures in the folder.
 opposite_directions = {}
 opposite_directions['right'] = 'left'
 opposite_directions['left'] = 'right'
 opposite_directions['up'] = 'down'
 opposite_directions['down'] = 'up'
 
-picture = 'unknown'
+picture = ''
+folder = './pictures/' 
+
 
 
 screen = pygame.display.set_mode((coordinates[row - 1] + width + 10, coordinates[col - 1] + width + 10))
 font = pygame.font.Font('freesansbold.ttf',24)
 
-game = Game(row, col, min, max)
+game = Game(row, col, minNumber, maxNumber)
 player_path = [[0, 0]]
 cells = [[0 for i in range(col)] for j in range(row)]
 previous = 'unknown'
@@ -227,7 +229,7 @@ while run:
             mouseX, mouseY = pygame.mouse.get_pos()
             for i in range(row):
                 for j in range(col):
-                    if coordinates[i] <= mouseY <= coordinates[i] + width and coordinates[j] <= mouseX <= coordinates[j] + width: #i and j swaped?
+                    if coordinates[i] <= mouseY <= coordinates[i] + width and coordinates[j] <= mouseX <= coordinates[j] + width: 
                         cells[i][j].click()
 
         if event.type == pygame.KEYDOWN:

@@ -1,3 +1,5 @@
+Hi! This is the file in which I wrote the algorithms of processes I used in the game while making it.
+
 The goal of the player: is to construct a path from the first cell until the last cell in which the result of
 algebraic expression is the value of last cell.
 
@@ -113,3 +115,5 @@ def direction(current, next):
         
 Another problem is multiple correct paths. For example, there is a choice between two of the = symbols when 
 the player reaches the cell diagonal to the final cell.
+
+Another thing I want to do is to show the path of the player as the line. Because, sometimes the player loses the track of his path and he can't do this as it is impossible to predict it because of multiple adjacent colored cells.
